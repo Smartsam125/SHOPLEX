@@ -1,14 +1,19 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page  import="java.sql.*,java.io.*" %>
 <%!Connection c = null;%>
-<%!ResultSet r1,r2,r3;%>
-<%!String qry1,qry2,qry3;%>
+<%!ResultSet r1,r2,r3,r4,r5;%>
+<%!String qry1,qry2,qry3,qry4,qry5;%>
+<%! Integer n1,n2,n3,n4, short1, short2, short3, short4;%> 
+<%! Integer med1, med2, med3, med4, lng1, lng2, lng3, lng4;%>
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>HR</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+  
+       <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
         <style>
             body {
 	color: #fff;
@@ -74,6 +79,7 @@
 	outline: none !important;
             }            
         </style>
+        <jsp:include page="autoReallocation.jsp" />
     </head>
     <body>
         <div style="display: flex " >
@@ -84,23 +90,24 @@
                 <table>
                 <tr>
                     <td>First Name:</td>
-                    <td><input type="text" name="fname" class="form-control"> </td></tr></div>
+                    <td><input type="text" name="fname" class="form-control" required> </td></tr></div>
                     <tr><div >
                     <td>Last Name:</td>
-                    <td><input type="text" name="lname" class="form-control"> </td></tr></div>
+                    <td><input type="text" name="lname" class="form-control" required> </td></tr></div>
                 <tr><div>
                     <td>Contact:</td>
-                    <td><input type="text" name="tel" class="form-control"></td></tr></div>
+                    <td><input type="text" name="tel" class="form-control" required></td></tr></div>
                     <div class="row"><div class="col">
+                            <tr><td>CategoryID: Tecno-1, Samsung-2, Iphone-3, Itel-4</td></tr>
                       <tr>
-                          <td>Product-Set:</td>
-                          <td><select name="set" class="form-control">
-                            <option>Tecno</option>
-                            <option>Samsung</option>
-                            <option>Iphone</option>
-                            <option>Itel</option>
+                          <td>Product-LineID:</td>
+                          <td><select name="line" class="form-control" required>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
                               </select></td></tr></div>
-                        <div class="col">
+<!--                        <div class="col">
                  <tr>
                     <td>
                         Product-Line:
@@ -109,7 +116,7 @@
                             <option>Medium</option>
                             <option>Long</option>
                         </select></td>
-                 </tr></div></div>
+                 </tr></div></div>-->
                 <div class="btn btn-success btn-lg btn-block">
                 <tr>
                     <td>
@@ -117,7 +124,7 @@
             </table>
         </form>
             </div><br><br/>
-        
+            
           <!-- Database connection-->
           <%
           try{
@@ -130,42 +137,79 @@
                  e.printStackTrace();
             }
             if(c != null){
+       
              try{ 
-            qry1 = "SELECT * FROM staff WHERE product_line='Short'";
-            qry2 = "SELECT * FROM staff WHERE product_line='Medium'";
-            qry3 = "SELECT * FROM staff WHERE product_line='Long'";
+            qry1 = "SELECT * FROM staff ";
             
-            Statement stmt = null;
-            stmt = c.createStatement();
+            qry2 = "select count(*) from staff where category_id = '1' ";
+            qry3 = "select count(*) from staff where category_id = '2' ";
+            qry4 = "select count(*) from staff where category_id = '3' ";
+            qry5 = "select count(*) from staff where category_id = '4' ";
+              
+            Statement stmt1 = null;
+            stmt1 = c.createStatement();
+            r1 = stmt1.executeQuery(qry1); // result for query
             
-            r1 = stmt.executeQuery(qry1); //result for query for short-term
-            //r1.next();
-            Statement st = c.createStatement();
-            r2 = st.executeQuery(qry2); //result for query for medium-term
-            //r2.next();
-            Statement smt = c.createStatement();
-            r3 = smt.executeQuery(qry3); //result for query for long-term
-            //r3.next();
+            //Results for the Different product Lines
+            Statement stmt2 = c.createStatement();
+            r2 = stmt2.executeQuery(qry2);
+            r2.next();
+            n1 = r2.getInt("count(*)");       // Calculate the staff in each category under Tecno
+            short1 = Math.round((1/7)*n1);
+            med1 = Math.round((2/7)*n1);
+            lng1 = Math.round((4/7)*n1);
+            
+            }catch(SQLException x){
+              out.println("GGGGGG");
+              x.getMessage();
+              }
+              try{
+            Statement stmt3 = c.createStatement();
+            r3 = stmt3.executeQuery(qry3); 
+            r3.next();
+            n2 = r3.getInt("count(*)");        // Calculate the staff in each category under Samsung 
+            short2 = Math.round((1/7)*n2);
+            med2 = Math.round((2/7)*n2);
+            lng2 = Math.round((4/7)*n2);
+            
+            Statement stmt4 = c.createStatement();
+            r4 = stmt4.executeQuery(qry4);
+            r4.next();
+            n3 = r4.getInt("count(*)");        // Calculate the staff in each category under Iphone
+            short3 = Math.round((1/7)*n3);
+            med3 = Math.round((2/7)*n3);
+            lng3 = Math.round((4/7)*n3);
+            
+            Statement stmt5 = c.createStatement();
+            r5 = stmt5.executeQuery(qry5); 
+            r5.next();
+            n4 = r5.getInt("count(*)");         // Calculate the staff in each category under Itel
+            short4 = Math.round((1/7)*n4);
+            med4 = Math.round((2/7)*n4);
+            lng4 = Math.round((4/7)*n4);
+            
               } catch(SQLException q){
               out.println("Another error bro");
-              q.getMessage();
+              q.printStackTrace();
               }
               }
           %>
           <div>
-        Short-time:
-        <table>
+        Staff
+        <table id="table1">
             <tr>
-                <td>Staff Name</td>
-                <td>Product</td>
-                 <td>Contact</td>
+                <td>FirstName</td>
+                 <td>LastName</td>
+                <td>Contact</td>
+                 <td>LineID</td>
             <%
     try{
         while(r1.next()) { %>
             <tr>
                 <td><%=r1.getString("firstname")%></td>
-                <td><%=r1.getString("product_line")%></td>
-                 <td><%=r1.getString("contact")%></td>
+                 <td><%=r1.getString("lastname")%></td>
+                <td><%=r1.getString("contact")%></td>
+                 <td><%=r1.getString("category_id")%></td>
             </tr>
             <% } 
                 }catch(SQLException o){
@@ -173,39 +217,52 @@
                 o.printStackTrace();
             }%>
         </table><br/>
-        Medium-term:
+        </div></div>
+        <script>
+                $(document).ready( function () {
+                 $('table1').DataTable();
+                    } );
+            </script>
+        
+            <div display="flex" >
+        <h3>Product-line staff in each category</h3>
         <table>
-             <td>Staff Name</td>
-                <td>Product</td>
-                 <td>Contact</td>
-                <% try{
-                while(r2.next()){ %>
             <tr>
-                <td><%=r2.getString("firstname")%></td>
-                <td><%=r2.getString("product_line")%></td>
-                 <td><%=r2.getString("contact")%></td>
+                <th> </th>
+                <th>Short-term</th>
+                <th>Medium-term</th>
+                <th>Long-term</th>
             </tr>
-            <%}
-               }catch(SQLException n){
-                out.println("Hey i gat a problem here");
-               n.getMessage();}
-            %>
-        </table><br/>
-        Long-term:
-        <table>
-            <td>Staff Name</td>
-                <td>Product</td>
-                 <td>Contact</td>
-                <%while(r3.next()){ %>
             <tr>
-                <td><%=r3.getString("firstname")%></td>
-                <td><%=r3.getString("product_line")%></td>
-                 <td><%=r3.getString("contact")%></td>
+                <td>Tecno</td>
+                <td><%out.println(short1); %></td>
+                <td><% out.println(med1);%></td>
+                 <td><%out.println(lng1); %></td>
             </tr>
-            <%}
-            c.close();%>
-        </table><br/>
-        </div>
-        </div>
+             <tr>
+                <td>Samsung</td>
+                <td><%out.println(short2); %></td>
+                <td><%out.println(med2); %></td>
+                 <td><%out.println(lng2); %></td>
+            </tr>
+             <tr>
+                <td>Iphone</td>
+                <td><%out.println(short3); %></td>
+                <td><%out.println(med3); %></td>
+                 <td><%out.println(lng3); %></td>
+            </tr>
+             <tr>
+                <td>Itel</td>
+                <td><%out.println(short4); %></td>
+                <td><%out.println(med4); %></td>
+                 <td><%out.println(lng4);%></td>
+            </tr>
+        </table>
+            </div>  
+            <div>
+                <form action="buttonReallocation.jsp" method="POST" >
+                    <button type="submit">ReAllocate</button>
+                </form>
+            </div>
     </body>
 </html>
