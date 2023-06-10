@@ -1,10 +1,11 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import ="java.sql.*,java.io.*"%>
+<%@page import ="java.sql.*,java.io.*,java.util.*"%>
 <%!Connection connection=null;%>
 <%!ResultSet set;%>
 <%!String sql,sql2,sql3;%>
 <%!Statement statement=null;%>
+<% int[] arr={23,56,89,89,90,78,45,90,34,12};%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +16,7 @@
     <!-- <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" /> -->
      <link rel="stylesheet" href="css/all.css"/>
      <link rel="stylesheet" href="css/webfonts"/>
-     <link rel="stylesheet" href="styles.css">
+     <link rel="stylesheet" href="css/styles.css">
     <title>Admin panel</title>
 </head>
 
@@ -46,53 +47,8 @@
            %>
     <!-- DB CONNECTION END-->
     <div class="container">
-        <div class="topbar">
-            <div class="logo">
-                <h2>Shoplex</h2>
-            </div>
-            <div class="search">
-                <input type="text" name="search" placeholder="search here">
-                <label for="search"><i class="fas fa-search"></i></label>
-            </div>
-            <i class="fas fa-bell"></i>
-            <div class="user">
-                <img src="img/user.png" alt="">
-            </div>
-        </div>
-        <div class="sidebar">
-            <ul>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-th-large"></i>
-                        <div>Dashboard</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa-brands fa-product-hunt"></i>
-                        <div>Products</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-users"></i>
-                        <div>Employees</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                        <div>Reports</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa-regular fa-envelope"></i>
-                        <div>Notifications</div>
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <jsp:include page="navBar.jsp" /><!-- Our navbar -->
+        <jsp:include page="side.jsp" /><!-- Our Sidebar -->
         <div class="main">
             <div class="cards">
                 <div class="card">
@@ -104,7 +60,7 @@
                             ResultSet product=statement.executeQuery(sql2);//query for customer
                             product.next();
                             out.println(product.getInt("count(*)"));
-                        %>
+                            %>
                         </div>
                         <div class="card-name">Total Products</div>
                     </div>
@@ -175,9 +131,63 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
-    <script src="chart1.js"></script>
-    <script src="chart2.js"></script>
+    <script src="./chart.min.js"></script>
+    <script>
+        var ctx = document.getElementById("lineChart").getContext("2d");
+        var myChart = new Chart(ctx, {
+        type: 'line',
+          data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+            label: 'Earnings in $',
+            data: <%out.println(Arrays.toString(arr));%>,
+            backgroundColor: [
+                'rgba(85,85,85, 1)'
+
+            ],
+            borderColor: 'rgb(41, 155, 99)',
+
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true
+    }
+    });
+    </script>
+    <script>
+        var ctx2 = document.getElementById('doughnut').getContext('2d');
+var myChart2 = new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['TECNO', 'IPHONE', 'ITEL', 'OTHERS'],
+
+        datasets: [{
+            label: 'Employees',
+            data: [42, 12, 8, 6],
+            backgroundColor: [
+                'rgba(41, 155, 99, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(120, 46, 139,1)'
+
+            ],
+            borderColor: [
+                'rgba(41, 155, 99, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(120, 46, 139,1)'
+
+            ],
+            borderWidth: 1
+        }]
+
+    },
+    options: {
+        responsive: true
+    }
+});
+    </script>
 </body>
 
 </html>
